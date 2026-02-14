@@ -24,8 +24,10 @@ This API allows businesses to manage drivers, vehicles, and routes while trackin
    ```powershell
    dotnet run --project src\DeliveryTracking.Api
    ```
-4. The API will be available at `http://localhost:5000` (or the port specified in `launchSettings.json`).
-5. Swagger documentation can be found at `/swagger`.
+4. The API will be available at:
+   - **HTTP**: `http://localhost:5000`
+   - **HTTPS**: `https://localhost:5001`
+5. Swagger documentation can be found at `/swagger` (e.g., `http://localhost:5000/swagger`).
 
 ## 🔄 Business Flow
 
@@ -76,15 +78,17 @@ dotnet test
 
 ### Data Seeding
 
-On startup, the application seeds initial data including:
+On startup, the application seeds initial data for testing:
 - **Driver**: "Big Bob" (`00000000-0000-0000-0000-000000000001`)
 - **Vehicle**: "Van1" (RocketVan) (`00000000-0000-0000-0000-000000000002`)
 - **Route**: "ExpressTruck" (Auckland to Wellington) (`00000000-0000-0000-0000-000000000003`)
 
-### Testing with Postman
+### Testing with Postman or Curl
 
-Because of how the data is seeded, you can make a `POST` request to `https://localhost:5001/deliveries` using Postman with the following payload to create a delivery:
+You can interact with the API using the seeded data.
 
+#### 1. Create a Delivery
+`POST http://localhost:5000/deliveries`
 ```json
 {
     "driverId": "00000000-0000-0000-0000-000000000001",
@@ -92,13 +96,24 @@ Because of how the data is seeded, you can make a `POST` request to `https://loc
     "routeId": "00000000-0000-0000-0000-000000000003"
 }
 ```
+*Take note of the `id` returned in the response.*
 
-After creating a delivery, you can retrieve its summary by making a `GET` request:
+#### 2. Start the Delivery
+`POST http://localhost:5000/deliveries/{id}/start`
 
-`GET https://localhost:5001/deliveries/{id}/summary`
+#### 3. Log a Tracking Event
+`POST http://localhost:5000/deliveries/{id}/events`
+```json
+{
+    "type": "CheckpointReached",
+    "description": "Reached the Asteroid Belt",
+    "location": "Sector 7G"
+}
+```
+*(Event types: `RouteStarted`, `CheckpointReached`, `Incident`, `DeliveryCompleted`, `Other`)*
 
-![Delivery Summary](docs/images/delivery-summary.png)
-
+#### 4. Get Delivery Summary
+`GET http://localhost:5000/deliveries/{id}/summary`
 
 ---
 
