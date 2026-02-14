@@ -13,6 +13,7 @@ public static class DataSeeder
         var driverRepo = scope.ServiceProvider.GetRequiredService<IDriverRepository>();
         var vehicleRepo = scope.ServiceProvider.GetRequiredService<IVehicleRepository>();
         var routeRepo = scope.ServiceProvider.GetRequiredService<IRouteRepository>();
+        var deliveryRepo = scope.ServiceProvider.GetRequiredService<IDeliveryRepository>();
 
         var driverId = Guid.Parse("00000000-0000-0000-0000-000000000001");
         driverRepo.Add(new Driver { Id = driverId, Name = "Big Bob" }).Wait();
@@ -24,15 +25,27 @@ public static class DataSeeder
         routeRepo.Add(new Route
         {
             Id = routeId,
-            Name = "ExpressTruck",
+            Name = "SH1 Southbound",
             Origin = "Auckland",
             Destination = "Wellington",
             Checkpoints =
             [
-                new Checkpoint { Id = Guid.NewGuid(), Name = "Asteroid Belt", Sequence = 1 },
-                new Checkpoint { Id = Guid.NewGuid(), Name = "Nebula Pass", Sequence = 2 }
+                new Checkpoint { Id = Guid.NewGuid(), Name = "Hamilton", Sequence = 1 },
+                new Checkpoint { Id = Guid.NewGuid(), Name = "Taupo", Sequence = 2 },
+                new Checkpoint { Id = Guid.NewGuid(), Name = "Palmerston North", Sequence = 3 },
+                new Checkpoint { Id = Guid.NewGuid(), Name = "Kapiti Coast", Sequence = 4 }
             ]
         }).Wait();
+
+        var deliveryId = Guid.Parse("00000000-0000-0000-0000-000000000004");
+        var delivery = new Delivery(deliveryId, driverId, vehicleId, routeId);
+        delivery.Start();
+        delivery.LogEvent(DeliveryEventType.CheckpointReached, "Arrived at Hamilton", "Hamilton");
+        delivery.LogEvent(DeliveryEventType.CheckpointReached, "Coffee break at Taupo", "Taupo");
+        delivery.LogEvent(DeliveryEventType.CheckpointReached, "Arrived at Palmerston North", "Palmerston North");
+        delivery.LogEvent(DeliveryEventType.CheckpointReached, "Driving through Kapiti Coast", "Kapiti Coast");
+        delivery.Complete();
+        deliveryRepo.Add(delivery).Wait();
     }
 }
 
