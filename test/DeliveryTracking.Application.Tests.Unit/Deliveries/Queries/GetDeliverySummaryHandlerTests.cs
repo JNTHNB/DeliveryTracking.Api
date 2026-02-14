@@ -1,6 +1,12 @@
+﻿using System.Linq;
+using DeliveryTracking.Application.Models;
 using DeliveryTracking.Domain.Aggregates;
+using DeliveryTracking.Domain.ValueObjects;
 using DeliveryTracking.Application.Interfaces;
 using DeliveryTracking.Application.Queries;
+using DeliveryTracking.Application.Exceptions;
+using FluentAssertions;
+using Moq;
 
 namespace DeliveryTracking.Application.Tests.Unit.Deliveries.Queries;
 
@@ -22,18 +28,23 @@ public class GetDeliverySummaryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldReturnSummary()
+    public async Task Handle_WithValidDeliveryId_ShouldReturnCompleteDeliverySummary()
     {
         // Arrange
         var deliveryId = Guid.NewGuid();
         var driverId = Guid.NewGuid();
         var vehicleId = Guid.NewGuid();
         var routeId = Guid.NewGuid();
-        
+
         var delivery = new Delivery(deliveryId, driverId, vehicleId, routeId);
-        var driver = new Driver { Id = driverId, Name = "John Doe" };
-        var vehicle = new Vehicle { Id = vehicleId, Name = "Truck 1" };
-        var route = new Route { Id = routeId, Name = "Route 66" };
+        delivery.Start();
+        delivery.LogEvent(DeliveryEventType.CheckpointReached, "Checkpoint 1 reached", "Bridge A");
+        delivery.LogEvent(DeliveryEventType.CheckpointReached, "Checkpoint 2 reached", "Tunnel B");
+        delivery.Complete();
+
+        var driver = new Driver { Id = driverId, Name = "Alice Smith" };
+        var vehicle = new Vehicle { Id = vehicleId, Name = "Falcon-9", Type = VehicleType.RocketVan };
+        var route = new Route { Id = routeId, Name = "Interstellar Express", Origin = "Earth", Destination = "Mars" };
 
         _deliveryRepoMock.Setup(r => r.Find(deliveryId)).ReturnsAsync(delivery);
         _driverRepoMock.Setup(r => r.Find(driverId)).ReturnsAsync(driver);
@@ -46,12 +57,25 @@ public class GetDeliverySummaryHandlerTests
         var result = await _handler.Handle(query, CancellationToken.None);
 
         // Assert
-        result.Should().NotBeNull();
-        result!.DeliveryId.Should().Be(deliveryId);
-        result.Driver.Name.Should().Be("John Doe");
-        result.Vehicle.Name.Should().Be("Truck 1");
-        result.Route.Name.Should().Be("Route 66");
+        result.Should().BeEquivalentTo(new DeliverySummary
+        {
+            DeliveryId = deliveryId,
+            Driver = new DeliverySummaryDriver(driver.Name),
+            Vehicle = new DeliverySummaryVehicle(vehicle.Name, vehicle.Type),
+            Route = new DeliverySummaryRoute(route.Name, route.Origin, route.Destination),
+            Status = DeliveryStatus.Completed,
+            StartedAt = delivery.StartedAt,
+            CompletedAt = delivery.CompletedAt,
+            Events = delivery.Events.Select(e => new DeliverySummaryEvent(
+                e.Timestamp,
+                e.Type,
+                e.Description,
+                e.Location)).ToList()
+        });
+
+        _deliveryRepoMock.Verify(r => r.Find(deliveryId), Times.Once);
+        _driverRepoMock.Verify(r => r.Find(driverId), Times.Once);
+        _vehicleRepoMock.Verify(r => r.Find(vehicleId), Times.Once);
+        _routeRepoMock.Verify(r => r.Find(routeId), Times.Once);
     }
 }
-
-
