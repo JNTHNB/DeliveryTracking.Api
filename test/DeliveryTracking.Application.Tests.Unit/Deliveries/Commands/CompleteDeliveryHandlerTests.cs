@@ -15,7 +15,7 @@ public class CompleteDeliveryHandlerTests
 
     public CompleteDeliveryHandlerTests()
     {
-        _handler = new CompleteDeliveryHandler(_deliveryRepoMock.Object, _dispatcherMock.Object);
+        _handler = new CompleteDeliveryHandler(_deliveryRepoMock.Object);
     }
 
     [Fact]

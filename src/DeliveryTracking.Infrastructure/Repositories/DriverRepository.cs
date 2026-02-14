@@ -4,5 +4,5 @@ using DeliveryTracking.Domain.Interfaces;
 
 namespace DeliveryTracking.Infrastructure.Repositories;
 
-internal class DriverRepository(IDomainEventContext domainEventContext) : InMemoryRepository<Driver>(domainEventContext), IDriverRepository;
-
+internal class DriverRepository(IDomainEventContext domainEventContext)
+    : InMemoryRepository<Driver>(domainEventContext), IDriverRepository;

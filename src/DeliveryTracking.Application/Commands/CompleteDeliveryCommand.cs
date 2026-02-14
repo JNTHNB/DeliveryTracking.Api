@@ -1,6 +1,5 @@
 using DeliveryTracking.Application.Exceptions;
 using DeliveryTracking.Application.Interfaces;
-using DeliveryTracking.Domain.Interfaces;
 using MediatR;
 
 namespace DeliveryTracking.Application.Commands;
@@ -8,8 +7,7 @@ namespace DeliveryTracking.Application.Commands;
 public record CompleteDeliveryCommand(Guid DeliveryId) : IRequest;
 
 public class CompleteDeliveryHandler(
-    IDeliveryRepository deliveryRepository,
-    IDomainEventDispatcher dispatcher)
+    IDeliveryRepository deliveryRepository)
     : IRequestHandler<CompleteDeliveryCommand>
 {
     public async Task Handle(CompleteDeliveryCommand request, CancellationToken cancellationToken)

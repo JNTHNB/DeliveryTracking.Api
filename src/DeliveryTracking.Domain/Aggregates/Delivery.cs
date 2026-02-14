@@ -1,29 +1,21 @@
 using DeliveryTracking.Domain.DomainEvents;
 using DeliveryTracking.Domain.ValueObjects;
-using JetBrains.Annotations;
 
 namespace DeliveryTracking.Domain.Aggregates;
 
-public enum DeliveryStatus
-{
-    Pending,
-    InProgress,
-    Completed,
-    Cancelled
-}
-
-public class Delivery : AggregateRoot
+public class Delivery(Guid id, Guid driverId, Guid vehicleId, Guid routeId)
+    : AggregateRoot
 {
     private readonly object _lock = new();
 
-    public Guid Id { get; private set; }
-    public Guid DriverId { get; private set; }
-    public Guid VehicleId { get; private set; }
-    public Guid RouteId { get; private set; }
-    public DeliveryStatus Status { get; private set; }
+    public Guid Id { get; private set; } = id;
+    public Guid DriverId { get; private set; } = driverId;
+    public Guid VehicleId { get; private set; } = vehicleId;
+    public Guid RouteId { get; private set; } = routeId;
+    public DeliveryStatus Status { get; private set; } = DeliveryStatus.Pending;
     public DateTime StartedAt { get; private set; }
     public DateTime? CompletedAt { get; private set; }
-    private readonly List<DeliveryEvent> _events = new();
+    private readonly List<DeliveryEvent> _events = [];
 
     public IReadOnlyCollection<DeliveryEvent> Events
     {
@@ -34,21 +26,6 @@ public class Delivery : AggregateRoot
                 return _events.ToList().AsReadOnly();
             }
         }
-    }
-
-    // Required for some serializers/ORMs
-    [UsedImplicitly]
-    private Delivery()
-    {
-    }
-
-    public Delivery(Guid id, Guid driverId, Guid vehicleId, Guid routeId)
-    {
-        Id = id;
-        DriverId = driverId;
-        VehicleId = vehicleId;
-        RouteId = routeId;
-        Status = DeliveryStatus.Pending;
     }
 
     public void Start()

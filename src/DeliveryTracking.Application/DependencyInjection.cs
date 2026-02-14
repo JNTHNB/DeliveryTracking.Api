@@ -9,7 +9,7 @@ public static class DependencyInjection
     /// <summary>
     /// Add services for the application layer.
     /// </summary>
-    public static IServiceCollection AddApplication(this IServiceCollection services)
+    public static void AddApplication(this IServiceCollection services)
     {
         services.AddMediatR(cfg =>
         {
@@ -17,8 +17,6 @@ public static class DependencyInjection
             cfg.AddOpenBehavior(typeof(DomainEventDispatchBehavior<,>));
         });
 
-        services.AddScoped<IDomainEventContext, DeliveryTracking.Domain.Services.DomainEventContext>();
-
-        return services;
+        services.AddScoped<IDomainEventContext, Domain.Services.DomainEventContext>();
     }
 }

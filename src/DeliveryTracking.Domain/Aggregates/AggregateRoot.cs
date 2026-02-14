@@ -1,11 +1,10 @@
-using DeliveryTracking.Domain.DomainEvents;
 using DeliveryTracking.Domain.Interfaces;
 
 namespace DeliveryTracking.Domain.Aggregates;
 
 public abstract class AggregateRoot
 {
-    private readonly List<IDomainEvent> _domainEvents = new();
+    private readonly List<IDomainEvent> _domainEvents = [];
     private readonly object _lock = new();
 
     public IReadOnlyCollection<IDomainEvent> DomainEvents

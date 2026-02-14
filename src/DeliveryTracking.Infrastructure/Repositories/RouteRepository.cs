@@ -4,5 +4,5 @@ using DeliveryTracking.Domain.Interfaces;
 
 namespace DeliveryTracking.Infrastructure.Repositories;
 
-internal class RouteRepository(IDomainEventContext domainEventContext) : InMemoryRepository<Route>(domainEventContext), IRouteRepository;
-
+internal class RouteRepository(IDomainEventContext domainEventContext)
+    : InMemoryRepository<Route>(domainEventContext), IRouteRepository;

@@ -5,7 +5,8 @@ using System.Collections.Concurrent;
 
 namespace DeliveryTracking.Infrastructure.Repositories;
 
-public abstract class InMemoryRepository<T>(IDomainEventContext? domainEventContext = null) : IRepository<T> where T : class
+public abstract class InMemoryRepository<T>(IDomainEventContext? domainEventContext = null)
+    : IRepository<T> where T : class
 {
     protected static readonly ConcurrentDictionary<Guid, T> Entities = new();
 

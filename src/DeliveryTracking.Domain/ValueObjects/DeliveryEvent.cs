@@ -13,10 +13,8 @@ public class DeliveryEvent
 {
     public Guid Id { get; set; }
     public Guid DeliveryId { get; set; }
-    public DateTime Timestamp { get; set; }
-    public DeliveryEventType Type { get; set; }
-    public string Description { get; set; } = string.Empty;
-    public string? Location { get; set; }
+    public DateTime Timestamp { get; init; }
+    public DeliveryEventType Type { get; init; }
+    public string Description { get; init; } = string.Empty;
+    public string? Location { get; init; }
 }
-
-

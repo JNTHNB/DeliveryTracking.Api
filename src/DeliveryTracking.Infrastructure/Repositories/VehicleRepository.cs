@@ -4,5 +4,5 @@ using DeliveryTracking.Domain.Interfaces;
 
 namespace DeliveryTracking.Infrastructure.Repositories;
 
-internal class VehicleRepository(IDomainEventContext domainEventContext) : InMemoryRepository<Vehicle>(domainEventContext), IVehicleRepository;
-
+internal class VehicleRepository(IDomainEventContext domainEventContext)
+    : InMemoryRepository<Vehicle>(domainEventContext), IVehicleRepository;

@@ -7,8 +7,8 @@ public class LoggingDomainEventDispatcher(ILogger<LoggingDomainEventDispatcher> 
 {
     public Task Dispatch(IDomainEvent domainEvent)
     {
-        logger.LogInformation("Domain Event Dispatched: {EventName} at {OccurredOn}", domainEvent.GetType().Name, domainEvent.OccurredOn);
+        logger.LogInformation("Domain Event Dispatched: {EventName} at {OccurredOn}", domainEvent.GetType().Name,
+            domainEvent.OccurredOn);
         return Task.CompletedTask;
     }
 }
-
