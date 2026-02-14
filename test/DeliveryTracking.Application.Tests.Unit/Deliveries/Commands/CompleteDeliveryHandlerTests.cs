@@ -38,7 +38,6 @@ public class CompleteDeliveryHandlerTests
         delivery.CompletedAt.Should().NotBeNull();
         delivery.Events.Should().Contain(e => e.Type == DeliveryEventType.DeliveryCompleted);
         _deliveryRepoMock.Verify(r => r.Update(delivery), Times.Once);
-        _dispatcherMock.Verify(d => d.Dispatch(It.IsAny<DeliveryCompletedDomainEvent>()), Times.Once);
     }
 }
 

@@ -142,6 +142,13 @@ public static class EndpointDefinitions
                 return Results.BadRequest(ex.Message);
             }
         });
+
+        group.MapGet("/active", async (IMediator mediator) =>
+        {
+            var query = new GetActiveDeliveriesQuery();
+            var deliveries = await mediator.Send(query);
+            return Results.Ok(deliveries);
+        });
     }
 }
 

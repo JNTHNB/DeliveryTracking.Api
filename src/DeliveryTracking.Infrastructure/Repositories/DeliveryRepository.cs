@@ -4,11 +4,11 @@ using DeliveryTracking.Domain.Interfaces;
 
 namespace DeliveryTracking.Infrastructure.Repositories;
 
-internal class DeliveryRepository(IDomainEventContext domainEventContext)
+public class DeliveryRepository(IDomainEventContext domainEventContext)
     : InMemoryRepository<Delivery>(domainEventContext), IDeliveryRepository
 {
     public Task<IEnumerable<Delivery>> GetActiveDeliveries()
     {
-        return Task.FromResult(Entities.Values.Where(d => d.Status == DeliveryStatus.InProgress));
+        return Task.FromResult(Entities.Values.Where(d => d.Status is DeliveryStatus.Pending or DeliveryStatus.InProgress));
     }
 }
