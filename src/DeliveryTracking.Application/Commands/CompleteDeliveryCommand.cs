@@ -1,6 +1,5 @@
 using DeliveryTracking.Application.Exceptions;
 using DeliveryTracking.Application.Interfaces;
-using DeliveryTracking.Domain.Aggregates;
 using DeliveryTracking.Domain.Interfaces;
 using MediatR;
 
@@ -21,16 +20,5 @@ public class CompleteDeliveryHandler(
         delivery.Complete();
 
         await deliveryRepository.Update(delivery);
-        await DispatchEventsAsync(delivery);
-    }
-
-    private async Task DispatchEventsAsync(Delivery delivery)
-    {
-        foreach (var domainEvent in delivery.DomainEvents)
-        {
-            await dispatcher.Dispatch(domainEvent);
-        }
-
-        delivery.ClearDomainEvents();
     }
 }
