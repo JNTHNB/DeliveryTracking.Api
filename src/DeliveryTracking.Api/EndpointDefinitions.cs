@@ -1,8 +1,6 @@
 using DeliveryTracking.Application.Commands;
 using DeliveryTracking.Application.Exceptions;
-using DeliveryTracking.Application.Interfaces;
 using DeliveryTracking.Application.Queries;
-using DeliveryTracking.Domain.Aggregates;
 using DeliveryTracking.Domain.Exceptions;
 using FluentValidation;
 using MediatR;
@@ -23,16 +21,24 @@ public static class EndpointDefinitions
     {
         var group = app.MapGroup("/drivers").WithTags("Drivers");
 
-        group.MapGet("/", async (IDriverRepository repo) =>
+        group.MapGet("/", async (IMediator mediator) =>
         {
-            var drivers = await repo.List();
+            var drivers = await mediator.Send(new GetDriversQuery());
             return Results.Ok(drivers);
         });
-        group.MapPost("/", async (IDriverRepository repo, Driver driver) =>
+        group.MapPost("/", async (IMediator mediator, CreateDriverCommand command) =>
         {
-            driver.Id = Guid.NewGuid();
-            await repo.Add(driver);
-            return Results.Created($"/drivers/{driver.Id}", driver);
+            try
+            {
+                var driver = await mediator.Send(command);
+                return Results.Created($"/drivers/{driver.Id}", driver);
+            }
+            catch (ValidationException ex)
+            {
+                return Results.ValidationProblem(ex.Errors
+                    .GroupBy(e => e.PropertyName)
+                    .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray()));
+            }
         });
     }
 
@@ -40,16 +46,24 @@ public static class EndpointDefinitions
     {
         var group = app.MapGroup("/vehicles").WithTags("Vehicles");
 
-        group.MapGet("/", async (IVehicleRepository repo) =>
+        group.MapGet("/", async (IMediator mediator) =>
         {
-            var vehicles = await repo.List();
+            var vehicles = await mediator.Send(new GetVehiclesQuery());
             return Results.Ok(vehicles);
         });
-        group.MapPost("/", async (IVehicleRepository repo, Vehicle vehicle) =>
+        group.MapPost("/", async (IMediator mediator, CreateVehicleCommand command) =>
         {
-            vehicle.Id = Guid.NewGuid();
-            await repo.Add(vehicle);
-            return Results.Created($"/vehicles/{vehicle.Id}", vehicle);
+            try
+            {
+                var vehicle = await mediator.Send(command);
+                return Results.Created($"/vehicles/{vehicle.Id}", vehicle);
+            }
+            catch (ValidationException ex)
+            {
+                return Results.ValidationProblem(ex.Errors
+                    .GroupBy(e => e.PropertyName)
+                    .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray()));
+            }
         });
     }
 
@@ -57,9 +71,9 @@ public static class EndpointDefinitions
     {
         var group = app.MapGroup("/routes").WithTags("Routes");
 
-        group.MapGet("/", async (IRouteRepository repo) =>
+        group.MapGet("/", async (IMediator mediator) =>
         {
-            var routes = await repo.List();
+            var routes = await mediator.Send(new GetRoutesQuery());
             return Results.Ok(routes);
         });
         group.MapPost("/", async (IMediator mediator, CreateRouteCommand command) =>
