@@ -1,7 +1,6 @@
 using DeliveryTracking.Application.Commands;
 using DeliveryTracking.Domain.Aggregates;
 using DeliveryTracking.Domain.ValueObjects;
-using DeliveryTracking.Domain.DomainEvents;
 using DeliveryTracking.Domain.Interfaces;
 using DeliveryTracking.Application.Interfaces;
 

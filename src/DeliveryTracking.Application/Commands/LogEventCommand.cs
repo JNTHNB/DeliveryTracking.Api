@@ -1,7 +1,5 @@
 using DeliveryTracking.Application.Exceptions;
 using DeliveryTracking.Application.Interfaces;
-using DeliveryTracking.Domain.Aggregates;
-using DeliveryTracking.Domain.Interfaces;
 using DeliveryTracking.Domain.ValueObjects;
 using MediatR;
 

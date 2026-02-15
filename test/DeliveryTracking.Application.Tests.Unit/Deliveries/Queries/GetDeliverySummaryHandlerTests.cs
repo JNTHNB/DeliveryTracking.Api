@@ -1,12 +1,8 @@
-﻿using System.Linq;
-using DeliveryTracking.Application.Models;
+﻿using DeliveryTracking.Application.Models;
 using DeliveryTracking.Domain.Aggregates;
 using DeliveryTracking.Domain.ValueObjects;
 using DeliveryTracking.Application.Interfaces;
 using DeliveryTracking.Application.Queries;
-using DeliveryTracking.Application.Exceptions;
-using FluentAssertions;
-using Moq;
 
 namespace DeliveryTracking.Application.Tests.Unit.Deliveries.Queries;
 
