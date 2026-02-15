@@ -1,5 +1,6 @@
 using DeliveryTracking.Domain.Aggregates;
 using DeliveryTracking.Domain.DomainEvents;
+using DeliveryTracking.Domain.Exceptions;
 using DeliveryTracking.Domain.ValueObjects;
 using FluentAssertions;
 
@@ -39,7 +40,7 @@ public class DeliveryTests
 
         // Assert
         delivery.Status.Should().Be(DeliveryStatus.InProgress);
-        delivery.StartedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+        delivery.StartedAt.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(1));
         delivery.Events.Should().ContainSingle(e => e.Type == DeliveryEventType.RouteStarted);
         delivery.DomainEvents.Should().ContainSingle(e => e is DeliveryStartedDomainEvent);
     }
@@ -55,8 +56,7 @@ public class DeliveryTests
         var act = () => delivery.Start();
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("Only pending deliveries can be started.");
+        act.Should().Throw<DeliveryAlreadyStartedException>();
     }
 
     [Fact]
@@ -90,8 +90,7 @@ public class DeliveryTests
         var act = () => delivery.LogEvent(DeliveryEventType.Incident, "Flat tire", null);
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("Cannot log events for a finished delivery.");
+        act.Should().Throw<DeliveryAlreadyFinishedException>();
     }
 
     [Fact]
@@ -107,7 +106,7 @@ public class DeliveryTests
 
         // Assert
         delivery.Status.Should().Be(DeliveryStatus.Completed);
-        delivery.CompletedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+        delivery.CompletedAt.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(1));
         delivery.Events.Should().Contain(e => e.Type == DeliveryEventType.DeliveryCompleted);
         delivery.DomainEvents.Should().ContainSingle(e => e is DeliveryCompletedDomainEvent);
     }
@@ -122,7 +121,6 @@ public class DeliveryTests
         var act = () => delivery.Complete();
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("Only deliveries in progress can be completed.");
+        act.Should().Throw<DeliveryNotInProgressException>();
     }
 }

@@ -1,16 +1,14 @@
 using DeliveryTracking.Application.Commands;
 using DeliveryTracking.Domain.Aggregates;
 using DeliveryTracking.Domain.ValueObjects;
-using DeliveryTracking.Domain.DomainEvents;
-using DeliveryTracking.Domain.Interfaces;
 using DeliveryTracking.Application.Interfaces;
+using DeliveryTracking.Domain.Exceptions;
 
 namespace DeliveryTracking.Application.Tests.Unit.Deliveries.Commands;
 
 public class StartDeliveryHandlerTests
 {
     private readonly Mock<IDeliveryRepository> _deliveryRepoMock = new();
-    private readonly Mock<IDomainEventDispatcher> _dispatcherMock = new();
     private readonly StartDeliveryHandler _handler;
 
     public StartDeliveryHandlerTests()
@@ -68,7 +66,7 @@ public class StartDeliveryHandlerTests
         Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("Only pending deliveries can be started.");
+        await act.Should().ThrowAsync<DeliveryAlreadyStartedException>();
     }
 }
 

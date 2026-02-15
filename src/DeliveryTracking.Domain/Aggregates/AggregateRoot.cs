@@ -5,33 +5,17 @@ namespace DeliveryTracking.Domain.Aggregates;
 public abstract class AggregateRoot
 {
     private readonly List<IDomainEvent> _domainEvents = [];
-    private readonly object _lock = new();
 
-    public IReadOnlyCollection<IDomainEvent> DomainEvents
-    {
-        get
-        {
-            lock (_lock)
-            {
-                return _domainEvents.ToList().AsReadOnly();
-            }
-        }
-    }
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
     protected void AddDomainEvent(IDomainEvent domainEvent)
     {
-        lock (_lock)
-        {
-            _domainEvents.Add(domainEvent);
-        }
+        _domainEvents.Add(domainEvent);
     }
 
     public void ClearDomainEvents()
     {
-        lock (_lock)
-        {
-            _domainEvents.Clear();
-        }
+        _domainEvents.Clear();
     }
 }
 

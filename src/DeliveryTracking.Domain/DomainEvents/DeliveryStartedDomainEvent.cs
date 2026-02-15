@@ -1,5 +1,3 @@
-using DeliveryTracking.Domain.Aggregates;
-
 namespace DeliveryTracking.Domain.DomainEvents;
 
-public record DeliveryStartedDomainEvent(Delivery Delivery) : DomainEvent;
+public record DeliveryStartedDomainEvent(Guid DeliveryId, DateTimeOffset StartedAt) : DomainEvent;

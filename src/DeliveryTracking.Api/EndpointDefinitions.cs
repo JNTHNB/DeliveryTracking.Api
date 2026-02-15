@@ -3,6 +3,7 @@ using DeliveryTracking.Application.Exceptions;
 using DeliveryTracking.Application.Interfaces;
 using DeliveryTracking.Application.Queries;
 using DeliveryTracking.Domain.Aggregates;
+using DeliveryTracking.Domain.Exceptions;
 using MediatR;
 using Route = DeliveryTracking.Domain.Aggregates.Route;
 
@@ -87,6 +88,10 @@ public static class EndpointDefinitions
             {
                 return Results.BadRequest(ex.Message);
             }
+            catch (DomainException ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
             catch (InvalidOperationException ex)
             {
                 return Results.BadRequest(ex.Message);
@@ -105,6 +110,10 @@ public static class EndpointDefinitions
             {
                 return Results.BadRequest(ex.Message);
             }
+            catch (DomainException ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
             catch (InvalidOperationException ex)
             {
                 return Results.BadRequest(ex.Message);
@@ -120,6 +129,10 @@ public static class EndpointDefinitions
                 return Results.Ok();
             }
             catch (IdNotFoundException ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
+            catch (DomainException ex)
             {
                 return Results.BadRequest(ex.Message);
             }

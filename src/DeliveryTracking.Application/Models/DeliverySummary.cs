@@ -10,8 +10,8 @@ public record DeliverySummary
     public required DeliverySummaryVehicle Vehicle { get; init; }
     public required DeliverySummaryRoute Route { get; init; }
     public DeliveryStatus Status { get; init; }
-    public DateTime StartedAt { get; init; }
-    public DateTime? CompletedAt { get; init; }
+    public DateTimeOffset StartedAt { get; init; }
+    public DateTimeOffset? CompletedAt { get; init; }
     public List<DeliverySummaryEvent> Events { get; init; } = [];
 }
 
@@ -22,7 +22,7 @@ public record DeliverySummaryVehicle(string Name, VehicleType Type);
 public record DeliverySummaryRoute(string Name, string Origin, string Destination);
 
 public record DeliverySummaryEvent(
-    DateTime Timestamp,
+    DateTimeOffset Timestamp,
     DeliveryEventType Type,
     string Description,
     string? Location);
