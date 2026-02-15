@@ -115,6 +115,10 @@ You can interact with the API using the seeded data.
 #### 4. Get Delivery Summary
 `GET http://localhost:5000/deliveries/{id}/summary`
 
+#### 5. View Sample Delivery Report
+A pre-seeded delivery is available for immediate review:
+`GET http://localhost:5000/deliveries/00000000-0000-0000-0000-000000000004/summary`
+
 ---
 
 ## **Future Considerations: Advancing the POC**
