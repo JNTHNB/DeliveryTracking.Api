@@ -5,10 +5,7 @@ using MediatR;
 
 namespace DeliveryTracking.Application.Commands;
 
-public record LogEventCommand(DeliveryEventType Type, string Description, string? Location) : IRequest
-{
-    public Guid DeliveryId { get; set; }
-}
+public record LogEventCommand(Guid DeliveryId, DeliveryEventType Type, string Description, string? Location) : IRequest;
 
 public class LogEventHandler(
     IDeliveryRepository deliveryRepository)

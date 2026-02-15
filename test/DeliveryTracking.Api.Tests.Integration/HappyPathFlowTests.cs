@@ -46,7 +46,7 @@ public class HappyPathFlowTests(WebApplicationFactory<Program> factory) : IClass
         startResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // 4. Tracking
-        var logEventRequest = new LogEventCommand(DeliveryEventType.CheckpointReached, "Arrived at Asteroid Belt", "Asteroid Belt");
+        var logEventRequest = new LogEventRequest(DeliveryEventType.CheckpointReached, "Arrived at Asteroid Belt", "Asteroid Belt");
         var logResponse = await _client.PostAsJsonAsync($"/deliveries/{deliveryId}/events", logEventRequest, _jsonOptions);
         logResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 

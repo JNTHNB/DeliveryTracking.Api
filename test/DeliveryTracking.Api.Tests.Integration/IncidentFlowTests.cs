@@ -38,7 +38,7 @@ public class IncidentFlowTests(WebApplicationFactory<Program> factory) : IClassF
         await _client.PostAsync($"/deliveries/{deliveryId}/start", null);
 
         // 4. Log Incident
-        var incidentRequest = new LogEventCommand(DeliveryEventType.Incident, "Engine overheating", "Sector 7G");
+        var incidentRequest = new LogEventRequest(DeliveryEventType.Incident, "Engine overheating", "Sector 7G");
         var incidentResponse = await _client.PostAsJsonAsync($"/deliveries/{deliveryId}/events", incidentRequest, _jsonOptions);
         incidentResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 

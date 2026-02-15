@@ -27,7 +27,7 @@ public class LogEventHandlerTests
         delivery.ClearDomainEvents();
         _deliveryRepoMock.Setup(r => r.Find(deliveryId)).ReturnsAsync(delivery);
 
-        var command = new LogEventCommand(DeliveryEventType.Incident, "Asteroid hit!", "Deep Space") { DeliveryId = deliveryId };
+        var command = new LogEventCommand(deliveryId, DeliveryEventType.Incident, "Asteroid hit!", "Deep Space");
 
         // Act
         await _handler.Handle(command, CancellationToken.None);

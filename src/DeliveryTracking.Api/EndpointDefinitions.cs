@@ -1,5 +1,6 @@
 using DeliveryTracking.Application.Commands;
 using DeliveryTracking.Application.Exceptions;
+using DeliveryTracking.Application.Models;
 using DeliveryTracking.Application.Queries;
 using DeliveryTracking.Domain.Exceptions;
 using FluentValidation;
@@ -138,11 +139,11 @@ public static class EndpointDefinitions
             }
         });
 
-        group.MapPost("/{id:guid}/events", async (Guid id, IMediator mediator, LogEventCommand command) =>
+        group.MapPost("/{id:guid}/events", async (Guid id, IMediator mediator, LogEventRequest request) =>
         {
             try
             {
-                command.DeliveryId = id;
+                var command = new LogEventCommand(id, request.Type, request.Description, request.Location);
                 await mediator.Send(command);
                 return Results.Ok();
             }
