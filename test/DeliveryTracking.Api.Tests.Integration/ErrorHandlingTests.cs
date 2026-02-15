@@ -53,4 +53,38 @@ public class ErrorHandlingTests(WebApplicationFactory<Program> factory) : IClass
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
+
+    [Fact]
+    public async Task Delivery_CreateWithEmptyIds_ShouldReturnBadRequestWithValidationErrors()
+    {
+        // Arrange
+        var createRequest = new CreateDeliveryCommand(Guid.Empty, Guid.Empty, Guid.Empty);
+
+        // Act
+        var response = await _client.PostAsJsonAsync("/deliveries", createRequest);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var problemDetails = await response.Content.ReadFromJsonAsync<Microsoft.AspNetCore.Mvc.ValidationProblemDetails>();
+        problemDetails!.Errors.Should().ContainKey("DriverId");
+        problemDetails.Errors.Should().ContainKey("VehicleId");
+        problemDetails.Errors.Should().ContainKey("RouteId");
+    }
+
+    [Fact]
+    public async Task Route_CreateWithInvalidData_ShouldReturnBadRequestWithValidationErrors()
+    {
+        // Arrange
+        var createRequest = new CreateRouteCommand("", "", "", []);
+
+        // Act
+        var response = await _client.PostAsJsonAsync("/routes", createRequest);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var problemDetails = await response.Content.ReadFromJsonAsync<Microsoft.AspNetCore.Mvc.ValidationProblemDetails>();
+        problemDetails!.Errors.Should().ContainKey("Name");
+        problemDetails.Errors.Should().ContainKey("Origin");
+        problemDetails.Errors.Should().ContainKey("Destination");
+    }
 }

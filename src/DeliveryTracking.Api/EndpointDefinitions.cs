@@ -4,8 +4,8 @@ using DeliveryTracking.Application.Interfaces;
 using DeliveryTracking.Application.Queries;
 using DeliveryTracking.Domain.Aggregates;
 using DeliveryTracking.Domain.Exceptions;
+using FluentValidation;
 using MediatR;
-using Route = DeliveryTracking.Domain.Aggregates.Route;
 
 namespace DeliveryTracking.Api;
 
@@ -62,11 +62,19 @@ public static class EndpointDefinitions
             var routes = await repo.List();
             return Results.Ok(routes);
         });
-        group.MapPost("/", async (IRouteRepository repo, Route route) =>
+        group.MapPost("/", async (IMediator mediator, CreateRouteCommand command) =>
         {
-            route.Id = Guid.NewGuid();
-            await repo.Add(route);
-            return Results.Created($"/routes/{route.Id}", route);
+            try
+            {
+                var route = await mediator.Send(command);
+                return Results.Created($"/routes/{route.Id}", route);
+            }
+            catch (ValidationException ex)
+            {
+                return Results.ValidationProblem(ex.Errors
+                    .GroupBy(e => e.PropertyName)
+                    .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray()));
+            }
         });
     }
 
@@ -81,6 +89,12 @@ public static class EndpointDefinitions
                 var delivery = await mediator.Send(command);
                 var deliveryId = delivery.Id.ToString();
                 return Results.Created($"/deliveries/{deliveryId}", delivery);
+            }
+            catch (ValidationException ex)
+            {
+                return Results.ValidationProblem(ex.Errors
+                    .GroupBy(e => e.PropertyName)
+                    .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray()));
             }
             catch (IdNotFoundException ex)
             {
