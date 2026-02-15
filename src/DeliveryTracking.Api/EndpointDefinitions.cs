@@ -23,7 +23,11 @@ public static class EndpointDefinitions
     {
         var group = app.MapGroup("/drivers").WithTags("Drivers");
 
-        group.MapGet("/", async (IDriverRepository repo) => await repo.List());
+        group.MapGet("/", async (IDriverRepository repo) =>
+        {
+            var drivers = await repo.List();
+            return Results.Ok(drivers);
+        });
         group.MapPost("/", async (IDriverRepository repo, Driver driver) =>
         {
             driver.Id = Guid.NewGuid();
@@ -36,7 +40,11 @@ public static class EndpointDefinitions
     {
         var group = app.MapGroup("/vehicles").WithTags("Vehicles");
 
-        group.MapGet("/", async (IVehicleRepository repo) => await repo.List());
+        group.MapGet("/", async (IVehicleRepository repo) =>
+        {
+            var vehicles = await repo.List();
+            return Results.Ok(vehicles);
+        });
         group.MapPost("/", async (IVehicleRepository repo, Vehicle vehicle) =>
         {
             vehicle.Id = Guid.NewGuid();
@@ -49,7 +57,11 @@ public static class EndpointDefinitions
     {
         var group = app.MapGroup("/routes").WithTags("Routes");
 
-        group.MapGet("/", async (IRouteRepository repo) => await repo.List());
+        group.MapGet("/", async (IRouteRepository repo) =>
+        {
+            var routes = await repo.List();
+            return Results.Ok(routes);
+        });
         group.MapPost("/", async (IRouteRepository repo, Route route) =>
         {
             route.Id = Guid.NewGuid();
